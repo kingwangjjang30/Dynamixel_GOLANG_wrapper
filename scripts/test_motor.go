@@ -1,7 +1,7 @@
 package main
 
 import (
-	"dynamixel-controller/pkg/motor"
+	"DXL_GOLANG_wrapper/pkg/motor"
 	"fmt"
 	"log"
 )
