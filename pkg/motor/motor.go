@@ -2,18 +2,17 @@ package motor
 
 import (
 	"fmt"
-	"protocol" // protocol 패키지에서 Dynamixel을 임포트
 )
 
 type MotorController struct {
-	dxl *protocol.Dynamixel // Dynamixel 구조체를 포함하여 시리얼 포트 관리
-	id  byte                // 모터 ID
+	dxl *Dynamixel // Dynamixel 구조체를 포함하여 시리얼 포트 관리
+	id  byte       // 모터 ID
 }
 
 // NewMotorController는 새로운 MotorController를 초기화합니다.
 func NewMotorController(portName string, baudRate int, motorID byte) (*MotorController, error) {
 	// Dynamixel 인스턴스를 생성하여 연결
-	dxl, err := protocol.NewDynamixel(portName, baudRate)
+	dxl, err := NewDynamixel(portName, baudRate)
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +61,8 @@ func (mc *MotorController) SyncWrite(positions map[byte]int) error {
 	}
 
 	// SyncWrite로 모든 모터에 목표 위치 전송
-	err := mc.dxl.SyncWrite(0x30, byte(len(data[0])), data)
+	// 각 모터마다 전송되는 실제 데이터 길이는 위치 값(2바이트)만 포함합니다.
+	err := mc.dxl.SyncWrite(0x30, 2, data)
 	if err != nil {
 		return fmt.Errorf("failed to sync write: %v", err)
 	}
